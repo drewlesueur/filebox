@@ -3,7 +3,7 @@ _ = require "underscore"
 require("drews-mixins") _
 form = require "connect-form"
 
-{wait} = _
+{wait, map, s} = _
 
 log = (args...) -> console.log args... 
 
@@ -19,7 +19,7 @@ app = module.exports = express.createServer()
 app.configure () ->
   app.use form
     keepExtensions: true
-    uploadDir: "./pics"
+    uploadDir: "./public/files"
   app.use(express.bodyParser())
   app.use express.cookieParser()
   app.use express.session secret: "boom shaka laka"
@@ -52,7 +52,8 @@ app.post "/", (req, res) ->
     res.send "you need to do mulitpart/form-data"
   else
     req.form.complete (err, fields, files) ->
-      res.send JSON.stringify files
+      res.send map files, (file) -> "http://filebox.drewl.us"
+      #res.send JSON.stringify files
 
 
 pg "/p", (req, res) ->
