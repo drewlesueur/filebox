@@ -1,0 +1,6 @@
+*.swp
+*.swo
+config.coffee
+config.js
+app.js
+pics
