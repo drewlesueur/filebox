@@ -22,12 +22,13 @@ drewsSignIn = (req, res, next) ->
 
 
 enableCORS = (req, res, next) ->
-  req.header["Access-Control-Allow-Origin"] = "*"
+  res.setHeader "Access-Control-Allow-Origin", "*"
   next()
 
 
 app = module.exports = express.createServer()
 app.configure () ->
+  app.use enableCORS
   # app.use form
   #   keepExtensions: true
   #   uploadDir: "./public/files"
@@ -38,7 +39,6 @@ app.configure () ->
   app.use(app.router)
   app.use(express.static(__dirname + '/public'))
   app.use drewsSignIn
-  app.use enableCORS
 
 app.configure 'development', () ->
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })) 
