@@ -2,7 +2,7 @@
 define "filebox", ->
   _ = require "underscore"
   drews = require "drews-mixins"
-  nimble = require "nimble"
+  require "nimble"
   $ = require "jquery"  
   {"on":bind, trigger, s, log, eachArray} = _
   self = {}
@@ -31,7 +31,7 @@ define "filebox", ->
       xhr.open("POST", "http://filebox.drewl.us/");
       xhr.onload = (e) ->
         console.log "done!"
-        res = JSON.stringify e.currentTarget.responseText
+        res = JSON.parse e.currentTarget.responseText
         trigger self, "uploaded", res
       xhr.send formData
   self

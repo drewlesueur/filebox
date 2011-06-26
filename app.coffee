@@ -1,10 +1,16 @@
 config = require './config.coffee'
 _ = require "underscore"
+nimble = require "nimble"
+_.mixin nimble
 drews = require "drews-mixins"
 formidable = require "formidable"
-{wait, map, s} = _
+crypto = require "crypto"
+fs = require "fs"
+util = require "util"
 
-log = (args...) -> console.log args... 
+{wait, map, s, log} = _
+log _.series
+
 
 
 express = require('express')
@@ -51,6 +57,27 @@ pg = (p, f) ->
 app.get "/drew", (req, res) ->
   res.send "aguzate, hazte valer"
 
+moveFile = (source, dest, cb) ->
+ inStream = fs.createReadStream(source)
+ outStream = fs.createWriteStream(dest)
+ util.pump inStream, outStream, (err) ->
+   if err then return cb err 
+   fs.unlink source, (err) ->
+     if err then return cb err
+     cb null, dest
+
+
+createFileHash = (file, cb) ->
+  shasum = crypto.createHash 'sha1'
+  stream = fs.ReadStream file
+  stream.on 'data', (data) -> shasum.update data
+  stream.on 'error', (err) -> cb err
+  stream.on 'end', () ->
+    hash = shasum.digest 'hex'
+    cb null, hash
+
+  
+
 
 app.post "/", (req, res) ->
   form = new formidable.IncomingForm()
@@ -62,8 +89,16 @@ app.post "/", (req, res) ->
   form.on "file", (field, file) ->
     files.push file
   form.on "end", () ->
-    res.send files
+    # you could use nimble.series if you created a function for every on
+    # or you could use drews.doneMaker
+    map files, (file, cb) ->
+      createFileHash file.path, (err, hash) ->
+        moveFile file.path, "./public/files/#{hash}", (err) ->
+          cb err, "http://filebox.drewl.us/files/#{hash}"
+    , (err, results) ->
+      res.send results
   form.parse(req)
+
 
       
         

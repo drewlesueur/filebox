@@ -1,9 +1,9 @@
 (function() {
   define("filebox", function() {
-    var $, bind, drews, eachArray, log, nimble, s, self, trigger, _;
+    var $, bind, drews, eachArray, log, s, self, trigger, _;
     _ = require("underscore");
     drews = require("drews-mixins");
-    nimble = require("nimble");
+    require("nimble");
     $ = require("jquery");
     bind = _["on"], trigger = _.trigger, s = _.s, log = _.log, eachArray = _.eachArray;
     self = {};
@@ -34,7 +34,7 @@
         xhr.onload = function(e) {
           var res;
           console.log("done!");
-          res = JSON.stringify(e.currentTarget.responseText);
+          res = JSON.parse(e.currentTarget.responseText);
           return trigger(self, "uploaded", res);
         };
         return xhr.send(formData);
