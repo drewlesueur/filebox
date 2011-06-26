@@ -11,10 +11,9 @@ $ ->
   bind filebox, "uploaded", (urls) ->
     log "the urls are "
     log urls
-    return
     each urls, (url) ->
       $(document.body).append $ """
-        <a href="#{url}">file</a>
+        <a href="#{url}" target="_blank">file</a>
       """
   
   

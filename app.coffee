@@ -92,9 +92,11 @@ app.post "/", (req, res) ->
     # you could use nimble.series if you created a function for every on
     # or you could use drews.doneMaker
     map files, (file, cb) ->
+      extension = s(file.path.split("."), 1).join "."
       createFileHash file.path, (err, hash) ->
-        moveFile file.path, "./public/files/#{hash}", (err) ->
-          cb err, "http://filebox.drewl.us/files/#{hash}"
+        fileName = "#{hash}.#{extension}"
+        moveFile file.path, "./public/files/#{fileName}", (err) ->
+          cb err, "http://filebox.drewl.us/files/#{fileName}"
     , (err, results) ->
       res.send results
   form.parse(req)

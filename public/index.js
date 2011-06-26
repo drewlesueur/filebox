@@ -13,9 +13,8 @@
     return bind(filebox, "uploaded", function(urls) {
       log("the urls are ");
       log(urls);
-      return;
       return each(urls, function(url) {
-        return $(document.body).append($("<a href=\"" + url + "\">file</a>"));
+        return $(document.body).append($("<a href=\"" + url + "\" target=\"_blank\">file</a>"));
       });
     });
   });
