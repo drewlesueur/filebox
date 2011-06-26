@@ -1,21 +1,18 @@
-#TODO: implement ajax something like this
+#This is example usage
+_ = require "underscore"
+$ = require "jquery"
+drews = require "drews-mixins"
+filebox = require "filebox"
+$ ->
+  {"on": bind, log} = _
+  fileForm = filebox.getEl()
+  log fileForm
+  $(document.body).append fileForm
+  bind filebox, "uploaded", (urls) ->
+    each urls, (url) ->
+      $(document.body).append $ """
+        <a href="#{url}">file</a>
+      """
+  
+  
 
-
-eachArray files, (file) ->
-  formData = new FormData
-  formData.append "name", file.name
-  #formData.append "name[0]", file.name
-  formData.append "size", file.size
-  formData.append "type", file.type
-  formData.append "file", file
-  reader = new FileReader()
-  xhr = new XMLHttpRequest()
-  xhr.open("POST", "/pictures");
-  #xhr.onload
-  #xhr.upload.onload = (e) ->
-  #xhr.onreadystatechange = (e) ->
-  #  if xhr.readyState is 4 and xhr.status is 200
-  xhr.onload = (e) ->
-    cb null
-  xhr.onerror = (e) -> cb e
-  xhr.send formData 

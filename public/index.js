@@ -1,20 +1,19 @@
 (function() {
-  eachArray(files, function(file) {
-    var formData, reader, xhr;
-    formData = new FormData;
-    formData.append("name", file.name);
-    formData.append("size", file.size);
-    formData.append("type", file.type);
-    formData.append("file", file);
-    reader = new FileReader();
-    xhr = new XMLHttpRequest();
-    xhr.open("POST", "/pictures");
-    xhr.onload = function(e) {
-      return cb(null);
-    };
-    xhr.onerror = function(e) {
-      return cb(e);
-    };
-    return xhr.send(formData);
+  var $, drews, filebox, _;
+  _ = require("underscore");
+  $ = require("jquery");
+  drews = require("drews-mixins");
+  filebox = require("filebox");
+  $(function() {
+    var bind, fileForm, log;
+    bind = _["on"], log = _.log;
+    fileForm = filebox.getEl();
+    log(fileForm);
+    $(document.body).append(fileForm);
+    return bind(filebox, "uploaded", function(urls) {
+      return each(urls, function(url) {
+        return $(document.body).append($("<a href=\"" + url + "\">file</a>"));
+      });
+    });
   });
 }).call(this);

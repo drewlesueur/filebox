@@ -1,8 +1,7 @@
 config = require './config.coffee'
 _ = require "underscore"
-require("drews-mixins") _
-form = require "connect-form"
-
+drews = require "drews-mixins"
+formidable = require "formidable"
 {wait, map, s} = _
 
 log = (args...) -> console.log args... 
@@ -15,11 +14,17 @@ drewsSignIn = (req, res, next) ->
     req.session.email isnt null
   next()
 
+
+enableCORS = (req, res, next) ->
+  req.header["Access-Control-Allow-Origin"] = "*"
+  next()
+
+
 app = module.exports = express.createServer()
 app.configure () ->
-  app.use form
-    keepExtensions: true
-    uploadDir: "./public/files"
+  # app.use form
+  #   keepExtensions: true
+  #   uploadDir: "./public/files"
   app.use(express.bodyParser())
   app.use express.cookieParser()
   app.use express.session secret: "boom shaka laka"
@@ -27,6 +32,7 @@ app.configure () ->
   app.use(app.router)
   app.use(express.static(__dirname + '/public'))
   app.use drewsSignIn
+  app.use enableCORS
 
 app.configure 'development', () ->
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })) 
@@ -47,13 +53,23 @@ app.get "/drew", (req, res) ->
 
 
 app.post "/", (req, res) ->
-  log "old trying to uplaod a pictures"
-  if not req.form
-    res.send "you need to do mulitpart/form-data"
-  else
-    req.form.complete (err, fields, files) ->
-      res.send map files, (file) -> "http://filebox.drewl.us"
-      #res.send JSON.stringify files
+  form = new formidable.IncomingForm()
+  form.keepExtensions = true
+  form.uploadDir = "./public/files"
+  # https://github.com/visionmedia/connect-form/pull/9/files
+  # add multiples to the node-formidable parse method
+  files = []
+  form.on "file", (field, file) ->
+    files.push file
+  form.on "end", () ->
+    res.send files
+  form.parse(req)
+
+      
+        
+        
+      #res.send map files.files, (file) -> "http://filebox.drewl.us#{s file.path, 0, "public".length}"
+      #res.send [fields, files]
 
 
 pg "/p", (req, res) ->
