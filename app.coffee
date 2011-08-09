@@ -93,6 +93,7 @@ app.post "/", (req, res) ->
     # or you could use drews.doneMaker
     map files, (file, cb) ->
       extension = s(file.path.split("."), 1).join "."
+      console.log JSON.stringify file
       createFileHash file.path, (err, hash) ->
         fileName = "#{hash}.#{extension}"
         moveFile file.path, "./public/files/#{fileName}", (err) ->
